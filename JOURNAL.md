@@ -22,3 +22,6 @@ I researched on what components to use, for the small remote i decided on using 
 <img width="578" height="478" alt="Screenshot 2026-09-13 at 11 42 32 PM" src="https://github.com/user-attachments/assets/1bfd492e-446c-4a97-8b5e-b25cc5a5c042" />
 
 **Total time spent: 4.5 hours**
+
+# September 14: PCB design
+I started with the PCB design on Kicad, already having designed a macropad i had some sense of what to do, The first step was relatively straightforward i would add my 3 buttons, the screen and the board to my schematic an connect up all the wires. The first problem started when i tried to assign footprints to the symbols. When i tried to search for a 4 pin oled I2C display i incurred a serious hurdle as there was none that existed that fit what i was using. Instead i downloaded the KiCAD Mod File and imported it into KiCAD
