@@ -24,4 +24,10 @@ I researched on what components to use, for the small remote i decided on using 
 **Total time spent: 4.5 hours**
 
 # September 14: PCB design
-I started with the PCB design on Kicad, already having designed a macropad i had some sense of what to do, The first step was relatively straightforward i would add my 3 buttons, the screen and the board to my schematic an connect up all the wires. The first problem started when i tried to assign footprints to the symbols. When i tried to search for a 4 pin oled I2C display i incurred a serious hurdle as there was none that existed that fit what i was using. Instead i downloaded the KiCAD Mod File and imported it into KiCAD
+I started with the PCB design on Kicad, already having designed a macropad i had some sense of what to do, The first step was relatively straightforward i would add my 3 buttons, the screen and the board to my schematic an connect up all the wires. The first problem started when i tried to assign footprints to the symbols. When i tried to search for a 4 pin oled I2C display i incurred a serious hurdle as there was none that existed that fit what i was using. Instead i downloaded the KiCAD Mod File and imported it into KiCAD and then i had the display. After adding everything to the schematic i assigned all of the footprints and then moved to the pcb design workspace where i 
+built the PCB I routed my traces correctly and used Via's to bring up the back copper face lines to the front. I added a battery conenctor for high power and long battery life when connected to a Lipo battery and easy charging capability when inserted into the dock. The PCB is one of my most complicated PCB's i have designed so far requiring SMD buttons and boards.
+
+<img width="369" height="639" alt="Screenshot 2026-09-15 at 11 22 10 AM" src="https://github.com/user-attachments/assets/09c748af-bae2-4a23-bf53-699db20cd329" />
+<img width="407" height="407" alt="Screenshot 2026-09-15 at 11 22 27 AM" src="https://github.com/user-attachments/assets/1592e685-b0be-477c-b31a-2be3a2a53378" />
+
+**Total time spent: 6 hours**
