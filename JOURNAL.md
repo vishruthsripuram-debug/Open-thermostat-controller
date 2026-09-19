@@ -34,4 +34,7 @@ built the PCB I routed my traces correctly and used Via's to bring up the back c
 
 # September 17: CAD design
 I ran into multiple issues with the CAD. When exporting from Kicad i had to manually edit the footprints to include the 3d models and edit the footprints. After that it was very simple. I inserted the PCB into fusion and designed a case to ecase the PCB. I designed it very simple and to be easily rechargeable. all you have to do is remove the pcb every 2-3 months or print the version with a built in charging port. The cad process was extremely simple until i got to the lid. I designed the lid to be held in place with screws and to have only 2 visible buttons the top button would be a rocker switch while the bottom would be a single button for mode cycling and power. figuring out the rocker switch was relatively was relatively easy and only took about 20 minutes to implement. 
+
+<img width="660" height="652" alt="Screenshot 2026-09-16 at 10 43 17 AM" src="https://github.com/user-attachments/assets/a3bdaa95-c717-49cc-96c1-12513dd46691" />
+
 **Total time spent: 3.5 hours**
