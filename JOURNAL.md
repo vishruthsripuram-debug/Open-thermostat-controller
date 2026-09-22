@@ -38,3 +38,8 @@ I ran into multiple issues with the CAD. When exporting from Kicad i had to manu
 <img width="660" height="652" alt="Screenshot 2026-09-16 at 10 43 17 AM" src="https://github.com/user-attachments/assets/a3bdaa95-c717-49cc-96c1-12513dd46691" />
 
 **Total time spent: 3.5 hours**
+
+# September 22: Mounting pegs and small fixes
+I added 2 things to this revision, I Added the mounting pegs for the PCB so that the board sits stable when the buttons are being pressed and when the remote is being held, it also offers a solid platform for the device. The mounting pegs were simple i created a sketch on the PCB base and extruded through as a solid object and made the pillars around it. The second fix was reducing the height of the baseplate so that the seeed ESP32 C6 would fit nicely. There wasn't much to this revision it was mostly just bugfixing and updating the design, all of the new cad files have been uploaded as well as the new render of the device in an interesting colour selection inspired by the craighill scissors which i saw on YT shorts.
+
+**Total time spent: 2 hours**
