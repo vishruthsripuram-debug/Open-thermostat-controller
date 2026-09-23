@@ -46,3 +46,10 @@ I added 2 things to this revision, I Added the mounting pegs for the PCB so that
 <img width="461" height="357" alt="Screenshot 2026-09-22 at 2 51 38 PM" src="https://github.com/user-attachments/assets/aba8d12c-9b87-49b3-90a2-bd47d11b0164" />
 
 **Total time spent: 2 hours**
+
+# September 23: designing schematic for Wall controller
+For the schematic i decided on a simple layout similarly to the smaller device, the wall controller is always powered so there is no need for a battery, this wall controller has a 1.3" Adafruit OLED, which is slightly larger i found that increasing the size anymore would significantly impact the device or make it not worth the cost to spend and install when premade thermostat solutions already exist. For my particular use case i have chosen to use a 3.5" TFT display as i already have one and think it would look nice inside the display, the wall controlelr is relatively simple and i plan to even just split up the buttons onto a pcb and hand solder everything else using wires to keep the footprint to a minimum and to minimise pick and place components to make it more DIY accessible.
+
+<img width="365" height="334" alt="Screenshot 2026-09-23 at 5 45 53 PM" src="https://github.com/user-attachments/assets/7c2dabf7-5fc1-445a-b6b7-78ad6c7f725f" />
+
+**Total time spent: 2 hours**
