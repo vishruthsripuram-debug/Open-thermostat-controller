@@ -1,0 +1,434 @@
+substitutions:
+  temp_step: "1"    # degrees per press (AC)
+  fan_step: "10"    # percent per press (fan)
+
+esphome:
+  name: ac-controller
+  friendly_name: AC Controller
+  on_boot:
+    priority: -100
+    then:
+      - lambda: |-
+          std::string e[3] = {id(ent_1).state, id(ent_2).state, id(ent_3).state};
+          std::string t[3] = {id(type_1).state, id(type_2).state, id(type_3).state};
+          std::string m[3] = {id(modes_1).state, id(modes_2).state, id(modes_3).state};
+          id(vals).assign(15, "");
+          id(ents).assign(3, "");
+          id(mode_lists).assign(3, "");
+          id(types).assign(3, 0);
+          for (int i = 0; i < 3; i++) {
+            if (e[i].empty()) continue;
+            int base = i * 5;
+            id(ents)[i] = e[i];
+            id(mode_lists)[i] = m[i];
+            id(types)[i] = (t[i] == "Fan") ? 2 : 1;
+            api::global_api_server->subscribe_home_assistant_state(e[i], optional<std::string>(),
+              [base](const std::string &s) { id(vals)[base] = s; });
+            if (id(types)[i] == 1) {
+              api::global_api_server->subscribe_home_assistant_state(e[i], optional<std::string>("temperature"),
+                [base](const std::string &s) { id(vals)[base + 1] = s; });
+              api::global_api_server->subscribe_home_assistant_state(e[i], optional<std::string>("current_temperature"),
+                [base](const std::string &s) { id(vals)[base + 2] = s; });
+            } else {
+              api::global_api_server->subscribe_home_assistant_state(e[i], optional<std::string>("percentage"),
+                [base](const std::string &s) { id(vals)[base + 3] = s; });
+              api::global_api_server->subscribe_home_assistant_state(e[i], optional<std::string>("preset_mode"),
+                [base](const std::string &s) { id(vals)[base + 4] = s; });
+            }
+          }
+          if (id(types)[id(dev)] == 0) {
+            for (int i = 0; i < 3; i++) if (id(types)[i] != 0) { id(dev) = i; break; }
+          }
+      - delay: 5s
+      - lambda: 'id(show_boot) = false;'
+
+esp32:
+  board: esp32-c6-devkitc-1
+  variant: esp32c6
+  framework:
+    type: esp-idf
+
+logger:
+
+network:
+  enable_ipv6: true
+
+openthread:
+  tlv: !secret thread_dataset_tlv
+
+api:
+  encryption:
+    key: !secret api_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+i2c:
+  sda: GPIO22   # D4
+  scl: GPIO23   # D5
+  frequency: 400kHz
+
+font:
+  - file: "gfonts://Roboto"
+    id: font_small
+    size: 12
+  - file: "gfonts://Roboto"
+    id: font_big
+    size: 20
+
+globals:
+  - id: dev                 # active device slot, remembered across reboots
+    type: int
+    restore_value: yes
+    initial_value: "0"
+  - id: next_dev
+    type: int
+    initial_value: "0"
+  - id: show_boot
+    type: bool
+    initial_value: "true"
+  - id: msg_until
+    type: uint32_t
+    initial_value: "0"
+  - id: msg
+    type: std::string
+  - id: cur_entity
+    type: std::string
+  - id: cur_arg
+    type: std::string
+  - id: cur_kind            # 0 none, 1 climate, 2 fan
+    type: int
+    initial_value: "0"
+  - id: vals                # 5 values per slot: state, temp, current temp, percentage, preset
+    type: std::vector<std::string>
+  - id: ents
+    type: std::vector<std::string>
+  - id: mode_lists
+    type: std::vector<std::string>
+  - id: types
+    type: std::vector<int>
+
+# ---------- Configuration interface (shows in HA under the device's Configuration) ----------
+text:
+  - platform: template
+    name: "Device 1 Entity"
+    id: ent_1
+    mode: text
+    optimistic: true
+    restore_value: true
+    initial_value: "climate.bedroom_ac"
+    max_length: 64
+    entity_category: config
+  - platform: template
+    name: "Device 1 Modes"
+    id: modes_1
+    mode: text
+    optimistic: true
+    restore_value: true
+    initial_value: "cool,heat,dry,fan_only,auto"
+    max_length: 64
+    entity_category: config
+  - platform: template
+    name: "Device 2 Entity"
+    id: ent_2
+    mode: text
+    optimistic: true
+    restore_value: true
+    initial_value: "fan.dyson_purifier"
+    max_length: 64
+    entity_category: config
+  - platform: template
+    name: "Device 2 Modes"
+    id: modes_2
+    mode: text
+    optimistic: true
+    restore_value: true
+    initial_value: "Auto,Manual"
+    max_length: 64
+    entity_category: config
+  - platform: template
+    name: "Device 3 Entity"
+    id: ent_3
+    mode: text
+    optimistic: true
+    restore_value: true
+    initial_value: ""
+    max_length: 64
+    entity_category: config
+  - platform: template
+    name: "Device 3 Modes"
+    id: modes_3
+    mode: text
+    optimistic: true
+    restore_value: true
+    initial_value: "cool,heat,dry,fan_only,auto"
+    max_length: 64
+    entity_category: config
+
+select:
+  - platform: template
+    name: "Device 1 Type"
+    id: type_1
+    options: ["AC", "Fan"]
+    initial_option: "AC"
+    optimistic: true
+    restore_value: true
+    entity_category: config
+  - platform: template
+    name: "Device 2 Type"
+    id: type_2
+    options: ["AC", "Fan"]
+    initial_option: "Fan"
+    optimistic: true
+    restore_value: true
+    entity_category: config
+  - platform: template
+    name: "Device 3 Type"
+    id: type_3
+    options: ["AC", "Fan"]
+    initial_option: "AC"
+    optimistic: true
+    restore_value: true
+    entity_category: config
+
+button:
+  - platform: restart
+    name: "Apply Config (Reboot)"
+    entity_category: config
+
+# ---------- Actions ----------
+script:
+  # SW1 / SW2: AC setpoint or fan speed
+  - id: adjust
+    mode: restart
+    parameters:
+      dir: int
+    then:
+      - lambda: |-
+          id(cur_kind) = 0;
+          if (id(vals).size() < 15) return;
+          int d = id(dev);
+          int kind = id(types)[d];
+          if (kind == 0) return;
+          id(cur_entity) = id(ents)[d];
+          if (kind == 1) {
+            auto sp = parse_number<float>(id(vals)[d * 5 + 1]);
+            if (!sp.has_value()) return;
+            id(cur_arg) = str_sprintf("%.1f", sp.value() + dir * ${temp_step});
+            id(cur_kind) = 1;
+          } else {
+            auto pct = parse_number<float>(id(vals)[d * 5 + 3]);
+            float v = (pct.has_value() ? pct.value() : 0.0f) + dir * ${fan_step};
+            if (v < ${fan_step}) v = ${fan_step};
+            if (v > 100) v = 100;
+            id(cur_arg) = str_sprintf("%.0f", v);
+            id(cur_kind) = 2;
+          }
+      - if:
+          condition:
+            lambda: 'return id(cur_kind) == 1;'
+          then:
+            - homeassistant.action:
+                action: climate.set_temperature
+                data:
+                  entity_id: !lambda 'return id(cur_entity);'
+                  temperature: !lambda 'return id(cur_arg);'
+      - if:
+          condition:
+            lambda: 'return id(cur_kind) == 2;'
+          then:
+            - homeassistant.action:
+                action: fan.set_percentage
+                data:
+                  entity_id: !lambda 'return id(cur_entity);'
+                  percentage: !lambda 'return id(cur_arg);'
+
+  # SW3 single press: next mode
+  - id: next_mode
+    mode: restart
+    then:
+      - lambda: |-
+          id(cur_kind) = 0;
+          if (id(vals).size() < 15) return;
+          int d = id(dev);
+          int kind = id(types)[d];
+          if (kind == 0) return;
+          std::string list = id(mode_lists)[d];
+          std::string cur = (kind == 1) ? id(vals)[d * 5] : id(vals)[d * 5 + 4];
+          std::vector<std::string> items;
+          size_t p = 0;
+          while (true) {
+            size_t q = list.find(',', p);
+            std::string s = list.substr(p, q == std::string::npos ? std::string::npos : q - p);
+            while (!s.empty() && s[0] == ' ') s.erase(0, 1);
+            while (!s.empty() && s.back() == ' ') s.pop_back();
+            if (!s.empty()) items.push_back(s);
+            if (q == std::string::npos) break;
+            p = q + 1;
+          }
+          if (items.empty()) return;
+          int idx = -1;
+          for (size_t k = 0; k < items.size(); k++) if (items[k] == cur) idx = (int) k;
+          id(cur_arg) = items[(idx + 1) % items.size()];
+          id(cur_entity) = id(ents)[d];
+          id(cur_kind) = kind;
+          id(msg) = id(cur_arg);
+          id(msg_until) = millis() + 1500;
+      - if:
+          condition:
+            lambda: 'return id(cur_kind) == 1;'
+          then:
+            - homeassistant.action:
+                action: climate.set_hvac_mode
+                data:
+                  entity_id: !lambda 'return id(cur_entity);'
+                  hvac_mode: !lambda 'return id(cur_arg);'
+      - if:
+          condition:
+            lambda: 'return id(cur_kind) == 2;'
+          then:
+            - homeassistant.action:
+                action: fan.set_preset_mode
+                data:
+                  entity_id: !lambda 'return id(cur_entity);'
+                  preset_mode: !lambda 'return id(cur_arg);'
+
+  # SW3 double press: next device
+  - id: next_device
+    mode: restart
+    then:
+      - lambda: |-
+          id(next_dev) = id(dev);
+          if (id(types).size() < 3) return;
+          for (int k = 1; k <= 3; k++) {
+            int c = (id(dev) + k) % 3;
+            if (id(types)[c] != 0) { id(next_dev) = c; break; }
+          }
+      - globals.set:
+          id: dev
+          value: !lambda 'return id(next_dev);'
+      - lambda: |-
+          std::string name = id(ents)[id(dev)];
+          size_t dot = name.find('.');
+          if (dot != std::string::npos) name = name.substr(dot + 1);
+          if (name.size() > 12) name = name.substr(0, 12);
+          id(msg) = name;
+          id(msg_until) = millis() + 1500;
+
+  # SW3 hold: on/off
+  - id: toggle_power
+    mode: restart
+    then:
+      - lambda: |-
+          id(cur_kind) = 0;
+          if (id(vals).size() < 15) return;
+          int d = id(dev);
+          if (id(types)[d] == 0) return;
+          id(cur_entity) = id(ents)[d];
+          id(cur_kind) = 1;
+          id(msg) = "Power";
+          id(msg_until) = millis() + 1000;
+      - if:
+          condition:
+            lambda: 'return id(cur_kind) == 1;'
+          then:
+            - homeassistant.action:
+                action: homeassistant.toggle
+                data:
+                  entity_id: !lambda 'return id(cur_entity);'
+
+# ---------- Buttons ----------
+binary_sensor:
+  - platform: gpio
+    id: sw1
+    internal: true
+    pin:
+      number: GPIO0   # D0, SW1: down
+      mode: INPUT_PULLUP
+      inverted: true
+    filters:
+      - delayed_on_off: 20ms
+    on_press:
+      - script.execute:
+          id: adjust
+          dir: -1
+
+  - platform: gpio
+    id: sw2
+    internal: true
+    pin:
+      number: GPIO1   # D1, SW2: up
+      mode: INPUT_PULLUP
+      inverted: true
+    filters:
+      - delayed_on_off: 20ms
+    on_press:
+      - script.execute:
+          id: adjust
+          dir: 1
+
+  - platform: gpio
+    id: sw3
+    internal: true
+    pin:
+      number: GPIO2   # D2, SW3: single = mode, double = device, hold = on/off
+      mode: INPUT_PULLUP
+      inverted: true
+    filters:
+      - delayed_on_off: 20ms
+    on_multi_click:
+      - timing:
+          - ON for 0.8s to 4s
+          - OFF for at least 0.1s
+        then:
+          - script.execute: toggle_power
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at most 0.4s
+          - ON for at most 0.5s
+          - OFF for at least 0.1s
+        then:
+          - script.execute: next_device
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at least 0.4s
+        then:
+          - script.execute: next_mode
+
+# ---------- Display ----------
+display:
+  - platform: ssd1306_i2c
+    model: "SSD1306 128x32"
+    address: 0x3C
+    update_interval: 250ms
+    lambda: |-
+      if (id(show_boot)) { it.printf(0, 8, id(font_small), "done flashing"); return; }
+      if (id(vals).size() < 15 || id(types)[id(dev)] == 0) {
+        it.printf(0, 8, id(font_small), "No device set");
+        return;
+      }
+      if (millis() < id(msg_until)) { it.printf(0, 6, id(font_big), "%s", id(msg).c_str()); return; }
+      int d = id(dev);
+      int kind = id(types)[d];
+      std::string state = id(vals)[d * 5];
+      std::string name = id(ents)[d];
+      size_t dot = name.find('.');
+      if (dot != std::string::npos) name = name.substr(dot + 1);
+      if (name.size() > 9) name = name.substr(0, 9);
+      it.printf(0, 0, id(font_small), "%s %s", kind == 1 ? "AC" : "Fan", name.c_str());
+      if (state == "off" || state == "unavailable" || state == "unknown" || state.empty()) {
+        it.printf(0, 12, id(font_big), "%s", state == "off" ? "OFF" : "N/A");
+        return;
+      }
+      if (kind == 1) {
+        auto sp = parse_number<float>(id(vals)[d * 5 + 1]);
+        auto cur = parse_number<float>(id(vals)[d * 5 + 2]);
+        if (sp.has_value()) it.printf(0, 12, id(font_big), "%.0fC", sp.value());
+        if (cur.has_value()) it.printf(127, 0, id(font_small), TextAlign::TOP_RIGHT, "%.1fC", cur.value());
+        it.printf(127, 18, id(font_small), TextAlign::TOP_RIGHT, "%s", state.c_str());
+      } else {
+        auto pct = parse_number<float>(id(vals)[d * 5 + 3]);
+        if (pct.has_value()) it.printf(0, 12, id(font_big), "%.0f%%", pct.value());
+        it.printf(127, 18, id(font_small), TextAlign::TOP_RIGHT, "%s", id(vals)[d * 5 + 4].c_str());
+      }
