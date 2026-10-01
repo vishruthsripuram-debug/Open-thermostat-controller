@@ -7,10 +7,8 @@ The open thermostat controller is a project designed to replace my old air condi
 ## CAD rendering
 <img width="763" height="482" alt="Screenshot 2026-09-22 at 2 34 57 PM" src="https://github.com/user-attachments/assets/f13ffddb-badc-4b09-97a0-d34e35d09102" />
 
-## PCB photo
+## PCB and schematic
 <img width="413" height="666" alt="Screenshot 2026-10-01 at 11 23 04 AM" src="https://github.com/user-attachments/assets/5e1d9e9e-7e37-4928-8864-73ece27966bf" />
-
-## Schematic photo
 <img width="477" height="376" alt="Screenshot 2026-10-01 at 11 22 33 AM" src="https://github.com/user-attachments/assets/0eee29c8-80bf-4a50-8374-12141e2ce1c2" />
 
 ## Design
