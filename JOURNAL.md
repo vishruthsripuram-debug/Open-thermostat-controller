@@ -53,3 +53,7 @@ For the schematic i decided on a simple layout similarly to the smaller device, 
 <img width="365" height="334" alt="Screenshot 2026-09-23 at 5 45 53 PM" src="https://github.com/user-attachments/assets/7c2dabf7-5fc1-445a-b6b7-78ad6c7f725f" />
 
 **Total time spent: 2 hours**
+
+# October 1: scrapping the wall controller
+I ultimately came to the conclusion that the wall controller was unnecessarily complex and ultimately quite useless considering the remote existed, however i still needed a way to control all of the smart devices in the room and act as the wall controller, i found the seeed studio sticky, this device can act a smart home dashboard and has buttons, since it is also esp based i can simply use espnow protocol to increase the battery life of the wall controller.
+**Total time spent: 0.2 hours**
