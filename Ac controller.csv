@@ -1,0 +1,5 @@
+"Reference","Qty","Value","DNP","Exclude from BOM","Exclude from Board","Exclude from Simulation","Exclude from Position Files","Footprint","Datasheet","#"
+"J1","1","Conn_01x02_Socket","","","","","${EXCLUDE_FROM_POS_FILES}","Connector_JST:JST_PH_S2B-PH-SM4-TB_1x02-1MP_P2.00mm_Horizontal","","1"
+"SW1,SW2,SW3","3","SW_Push","","","","","${EXCLUDE_FROM_POS_FILES}","Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92","","2"
+"U1","1","XIAO-ESP32-C6-SMD","","","","","${EXCLUDE_FROM_POS_FILES}","Seeed Studio XIAO Series Library:XIAO-ESP32-C6-SMD","","3"
+"U2","1","ER_OLEDM0.91_1x-I2C","","","","","${EXCLUDE_FROM_POS_FILES}","Oled:OLED SSD1306 I2C 0.96","https://www.buydisplay.com/download/manual/ER-OLEDM0.91-1_Datasheet.pdf","4"
