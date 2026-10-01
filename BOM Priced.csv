@@ -1,0 +1,7 @@
+"Ref","Qty","Value","MPN","Supplier","Unit Price (USD)","Line Total (USD)","Buy Link","Notes"
+"J1","1","Conn_01x02_Socket (JST PH 2-pin, SMD side entry)","S2B-PH-SM4-TB(LF)(SN)","Digi-Key","0.49","0.49","https://www.digikey.com/en/products/detail/jst-sales-america-inc/S2B-PH-SM4-TB/926655","Mouser also stocks it (306-S2BPHSM4TBLFSN, $0.49 @1). Part is a header; mates with a PHR-2 housing"
+"SW1,SW2,SW3","3","SW_Push (SMD tactile)","PTS645SM43SMTR92 LFS","Digi-Key","0.36","1.08","https://www.digikey.com/en/products/detail/c-k/PTS645SM43SMTR92-LFS/1146840","Price breaks: $0.313 @10, $0.262 @100"
+"U1","1","XIAO-ESP32-C6-SMD","113991254","Digi-Key","5.38","5.38","https://www.digikey.com/en/products/base-product/seeed-technology-co-ltd/1597/ESP32-C6/678377","Seeed XIAO ESP32-C6; Mouser lists it at $5.38 too. Seeed direct: $5.20 @10+"
+"U2","1","ER_OLEDM0.91_1x-I2C","ER-OLEDM0.91-1W-I2C","BuyDisplay","2.8","2.8","https://www.buydisplay.com/i2c-white-0-91-inch-oled-display-module-128x32-arduino-raspberry-pi","0.91in 128x32 SSD1306 I2C (white); blue variant same price. Footprint in KiCad says 0.96in, check it matches"
+"PCB","1","Custom PCB","-","(your quote)","1.8","1.8","","Price as given by you, per PCB"
+"","","","","","Total","11.55","",""
